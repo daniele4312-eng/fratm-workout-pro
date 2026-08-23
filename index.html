@@ -777,6 +777,32 @@ body.timer-open{overflow:hidden}
 }
 </style>
 
+
+<style>
+/* V25 */
+.timerCard{
+  padding-top:calc(env(safe-area-inset-top, 0px) + 34px)!important;
+}
+.timerModalInner{
+  margin-top:52px!important;
+}
+.timerClose{
+  top:calc(env(safe-area-inset-top, 0px) + 34px)!important;
+  right:20px!important;
+}
+@media(max-width:430px){
+  .timerCard{
+    padding-top:calc(env(safe-area-inset-top, 0px) + 38px)!important;
+  }
+  .timerModalInner{
+    margin-top:58px!important;
+  }
+  .timerClose{
+    top:calc(env(safe-area-inset-top, 0px) + 38px)!important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -1119,7 +1145,6 @@ function renderTimerExercise(){
    </div>`;
 }
 function closeTimer(){
- playUiTone("close");
  $("timerModal").classList.remove("open");
  document.body.classList.remove("timer-open");
 }
@@ -1536,7 +1561,7 @@ function drawLine(canvasId,pts,suffix,showValues=true){
  }));
 
  if(xy.length>1){
-   ctx.lineWidth=3.5;
+   ctx.lineWidth=2.6;
    for(let i=1;i<xy.length;i++){
      const a=xy[i-1],b=xy[i];
      ctx.strokeStyle=b.value<a.value?"#ff453a":"#34c759";
@@ -1546,7 +1571,7 @@ function drawLine(canvasId,pts,suffix,showValues=true){
 
  xy.forEach((p,i)=>{
    ctx.fillStyle=(i>0&&p.value<xy[i-1].value)?"#ff453a":"#34c759";
-   ctx.beginPath();ctx.arc(p.x,p.y,4.5,0,Math.PI*2);ctx.fill();
+   ctx.beginPath();ctx.arc(p.x,p.y,3.8,0,Math.PI*2);ctx.fill();
  });
 
  if(showValues){

@@ -1,7 +1,7 @@
-FRATM WORKOUT PRO V24
+FRATM WORKOUT PRO V25
 
-- Header abbassato e adattato alla safe-area dell'iPhone/Dynamic Island.
-- Titolo meno vicino alla parte alta dello schermo.
-- Rimosse completamente le date sotto i grafici.
-- Date mantenute solo nella colonna sinistra accanto ai valori di peso/reps.
-- Grafici con più spazio verticale per la linea.
+- Schermata Timer abbassata ulteriormente e adattata alla safe-area/Dynamic Island.
+- Anche la X di chiusura è stata spostata più in basso.
+- Rimosso il suono quando si preme la X.
+- Linee dei grafici leggermente più sottili.
+- Punti dei grafici leggermente più piccoli per un aspetto più pulito.
