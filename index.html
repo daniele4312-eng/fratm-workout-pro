@@ -616,7 +616,7 @@ body.timer-open{overflow:hidden}
 
 /* Make "Senza pesi" fully readable in the main workout table */
 .setrow{
-  grid-template-columns:40px minmax(112px,1.15fr) minmax(82px,1fr) minmax(82px,1fr) 48px!important;
+  grid-template-columns:40px minmax(118px,1.2fr) minmax(92px,1fr) minmax(92px,1fr)!important;
 }
 .setrow input[aria-label="kg"]{
   font-size:13px!important;
@@ -700,7 +700,7 @@ body.timer-open{overflow:hidden}
 /* Smaller screens */
 @media(max-width:430px){
   .setrow{
-    grid-template-columns:34px minmax(104px,1.15fr) minmax(76px,1fr) minmax(76px,1fr) 44px!important;
+    grid-template-columns:34px minmax(110px,1.2fr) minmax(82px,1fr) minmax(82px,1fr)!important;
   }
   .metricChartLayout{
     grid-template-columns:84px minmax(0,1fr);
@@ -800,6 +800,17 @@ body.timer-open{overflow:hidden}
   .timerClose{
     top:calc(env(safe-area-inset-top, 0px) + 38px)!important;
   }
+}
+</style>
+
+
+<style>
+/* V26 */
+.setrow{
+  column-gap:10px!important;
+}
+.setrow .lab{
+  text-align:center;
 }
 </style>
 
@@ -1056,7 +1067,6 @@ function renderPlan(p){
       oninput="localStorage.setItem(k('${p}',${i},${s},'reps'),this.value)">
     <input inputmode="numeric" aria-label="Reps extra" placeholder="extra" value="${localStorage.getItem(k(p,i,s,'rir'))??''}"
       oninput="localStorage.setItem(k('${p}',${i},${s},'rir'),this.value)">
-    <button class="done ${localStorage.getItem(k(p,i,s,'done'))==='1'?'on':''}" onclick="toggleDone(this,'${p}',${i},${s},${ex.rest})">✓</button>
    </div>`).join("");
   card.innerHTML=`<div class="exhead">
    <div><div class="exname">${ex.name}</div><div class="meta">${ex.sets} serie • ${ex.reps} • recupero ${fmtRest(ex.rest)}</div></div>
@@ -1066,7 +1076,7 @@ function renderPlan(p){
    </div>
   </div>
   <div class="tip">${ex.tip}</div>
-  <div class="setrow" style="margin-bottom:4px"><div></div><div class="lab">KG</div><div class="lab">REPS</div><div class="lab">REPS EXTRA</div><div></div></div>
+  <div class="setrow" style="margin-bottom:4px"><div></div><div class="lab">KG</div><div class="lab">REPS</div><div class="lab">REPS EXTRA</div></div>
   <div class="sets">${sets}</div>`;
   root.appendChild(card);
  });
@@ -1616,7 +1626,7 @@ function collectCurrentWorkoutState(){
          kg:localStorage.getItem(k(p,i,s,"kg"))??ex.kg,
          reps:localStorage.getItem(k(p,i,s,"reps"))??"",
          rir:localStorage.getItem(k(p,i,s,"rir"))??"",
-         done:localStorage.getItem(k(p,i,s,"done"))==="1"
+         done:false
        });
      }
      state[p].push({id:ex.id,name:ex.name,sets});
