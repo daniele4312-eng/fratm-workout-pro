@@ -1,7 +1,7 @@
-FRATM WORKOUT PRO V23
+FRATM WORKOUT PRO V24
 
-- Suono aggiunto anche alla X di chiusura del timer.
-- Migliorata la gestione dei valori laterali per Peso e Progressi.
-- Nei periodi con molti dati (es. 30 giorni), i valori laterali non si accavallano.
-- Il grafico mantiene tutti i punti; la colonna laterale mostra un massimo di 8 riferimenti distribuiti nel periodo quando necessario.
-- Spaziatura verticale dinamica per evitare sovrapposizioni tra giorno precedente e successivo.
+- Header abbassato e adattato alla safe-area dell'iPhone/Dynamic Island.
+- Titolo meno vicino alla parte alta dello schermo.
+- Rimosse completamente le date sotto i grafici.
+- Date mantenute solo nella colonna sinistra accanto ai valori di peso/reps.
+- Grafici con più spazio verticale per la linea.

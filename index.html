@@ -745,6 +745,38 @@ body.timer-open{overflow:hidden}
 }
 </style>
 
+
+<style>
+/* V24 */
+.app{
+  padding-top:calc(env(safe-area-inset-top, 0px) + 18px)!important;
+}
+.hero{
+  padding-top:0!important;
+  margin-top:0!important;
+}
+.hero h1{
+  margin-top:0!important;
+  line-height:1.05!important;
+}
+@media(max-width:430px){
+  .app{
+    padding-top:calc(env(safe-area-inset-top, 0px) + 12px)!important;
+  }
+  .hero h1{
+    font-size:34px!important;
+  }
+  .subtitle{
+    margin-top:6px!important;
+  }
+}
+
+/* Since dates are shown in the left rail, graphs no longer need bottom date labels. */
+.chart canvas{
+  margin-bottom:0!important;
+}
+</style>
+
 </head>
 
 <body>
@@ -1261,7 +1293,7 @@ function renderMetricRail(containerId,points,type,canvasId){
  const H=Math.max(240,canvas?canvas.getBoundingClientRect().height:250);
 
  // Must match drawLine() vertical plotting space.
- const topPad=64,bottomPad=54,usable=Math.max(90,H-topPad-bottomPad);
+ const topPad=64,bottomPad=24,usable=Math.max(90,H-topPad-bottomPad);
 
  const vals=points.map(x=>x.value);
  let min=Math.min(...vals),max=Math.max(...vals);
@@ -1489,7 +1521,8 @@ function drawLine(canvasId,pts,suffix,showValues=true){
  let vals=pts.map(p=>p.value),min=Math.min(...vals),max=Math.max(...vals);
  if(min===max){min-=suffix==="kg"?0.5:1;max+=suffix==="kg"?0.5:1}
 
- const pad={l:42,r:42,t:64,b:54},cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+ // No dates under the graph: more vertical room for the line.
+ const pad={l:42,r:42,t:64,b:24},cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
  ctx.strokeStyle="#33333d";ctx.lineWidth=1;
  for(let i=0;i<4;i++){
    const y=pad.t+ch*i/3;
@@ -1522,15 +1555,11 @@ function drawLine(canvasId,pts,suffix,showValues=true){
    xy.forEach((p,i)=>{
      const txt=suffix==="kg"?p.value.toFixed(2):String(Math.round(p.value));
      let candidates=[
-       {dx:0,dy:-24},
-       {dx:0,dy:28},
-       {dx:-26,dy:-16},
-       {dx:26,dy:-16},
-       {dx:-26,dy:24},
-       {dx:26,dy:24}
+       {dx:0,dy:-24},{dx:0,dy:28},{dx:-26,dy:-16},
+       {dx:26,dy:-16},{dx:-26,dy:24},{dx:26,dy:24}
      ];
-     if(i===0) candidates=[{dx:18,dy:-20},{dx:22,dy:24},{dx:0,dy:-28}];
-     if(i===xy.length-1) candidates=[{dx:-18,dy:-20},{dx:-22,dy:24},{dx:0,dy:-28}];
+     if(i===0)candidates=[{dx:18,dy:-20},{dx:22,dy:24},{dx:0,dy:-28}];
+     if(i===xy.length-1)candidates=[{dx:-18,dy:-20},{dx:-22,dy:24},{dx:0,dy:-28}];
 
      const tw=ctx.measureText(txt).width;
      let chosen=candidates[0];
@@ -1551,14 +1580,6 @@ function drawLine(canvasId,pts,suffix,showValues=true){
      ctx.fillText(txt,lx,ly);
    });
  }
-
- ctx.fillStyle="#a6a6b2";ctx.font="11px -apple-system";
- let ids=xy.length<=4?xy.map((_,i)=>i):[0,Math.round((xy.length-1)/3),Math.round((xy.length-1)*2/3),xy.length-1];
- [...new Set(ids)].sort((a,b)=>a-b).forEach(i=>{
-   const p=xy[i];
-   ctx.textAlign=i===0?"left":i===xy.length-1?"right":"center";
-   ctx.fillText(p.label,p.x,H-14);
- });
 }
 function collectCurrentWorkoutState(){
  let state={activePlan,upper:[],lower:[]};
