@@ -814,6 +814,11 @@ body.timer-open{overflow:hidden}
 }
 </style>
 
+<style>
+/* V27 */
+.historyDeleteBtn{padding:7px 10px!important;font-size:12px!important;min-height:auto!important}
+@media(max-width:430px){.historyDeleteBtn{padding:6px 8px!important;font-size:11px!important}}
+</style>
 </head>
 
 <body>
@@ -1032,13 +1037,13 @@ body.timer-open{overflow:hidden}
 
 const plans = {
  upper:[
-  {id:"pushup",name:"Push-up",sets:3,reps:"10-18",kg:"Senza pesi",rest:180,svg:"push",tip:"Petto aperto e corpo in linea. Prime serie con 1-2 reps extra; ultima vicino/al cedimento tecnico."},
-  {id:"row",name:"Rematore con 2 manubri",sets:3,reps:"10-15",kg:"4",rest:180,svg:"row",tip:"Schiena neutra, gomiti verso i fianchi, niente slancio. Parti da 4 kg/lato."},
-  {id:"lateral",name:"Alzate laterali",sets:2,reps:"10-15",kg:"2",rest:120,svg:"lat",tip:"1 secondo in alto e discesa lenta. Mantieni 2 kg finché la tecnica resta perfetta."},
-  {id:"shrug",name:"Shrug 🤷🏻‍♂️",sets:2,reps:"15-25",kg:"8",rest:120,svg:"shrug",tip:"Con il limite di 8 kg: pausa 2-3 secondi in alto e discesa molto controllata."},
-  {id:"curl",name:"Curl",sets:2,reps:"8-15",kg:"8",rest:180,svg:"curl",tip:"Gomiti fermi. La serie finisce quando per continuare servirebbe oscillare col busto."},
-  {id:"hammer",name:"Hammer curl",sets:2,reps:"8-12",kg:"8",rest:150,svg:"curl",tip:"Presa neutra, polso fermo. Cedimento tecnico, non ripetizioni sporche."},
-  {id:"triceps",name:"Estensione tricipiti sopra la testa",sets:2,reps:"10-15",kg:"4-6",rest:120,svg:"tri",tip:"Gomiti stabili e movimento controllato. Aumenta solo se 15 reps sono facili."},
+  {id:"pushup",name:"Push-up",sets:3,reps:"15+",kg:"Senza pesi",rest:180,svg:"push",tip:"Oggi: 15 (+2), 15 (+1), 15 (+0). Prossimo obiettivo: aumentare gradualmente le reps mantenendo tecnica pulita."},
+  {id:"row",name:"Rematore con 2 manubri",sets:3,reps:"10-15",kg:"6",rest:180,svg:"row",tip:"Oggi a 4 kg: 18 (+4), 20 (+2), 25 (+3). Passa a 6 kg per lato e riparti con reps controllate."},
+  {id:"lateral",name:"Alzate laterali",sets:3,reps:"15-20",kg:"2",rest:120,svg:"lat",tip:"Oggi: 15 (+3), 20 (+2), 20 (+2). Mantieni 2 kg, fermo in alto e discesa lenta."},
+  {id:"shrug",name:"Shrug 🤷🏻‍♂️",sets:2,reps:"18-25",kg:"8",rest:120,svg:"shrug",tip:"Oggi: 18 (+2), 20 (+2). Mantieni 8 kg con pausa forte in alto e discesa controllata."},
+  {id:"curl",name:"Curl",sets:2,reps:"12-15",kg:"8",rest:180,svg:"curl",tip:"Oggi: 14 (+1), 12 (+0). Mantieni 8 kg e prova ad aumentare gradualmente le reps senza oscillare."},
+  {id:"hammer",name:"Hammer curl",sets:2,reps:"8-12",kg:"8",rest:180,svg:"curl",tip:"Oggi: 10 (+0), 8 (+0). Mantieni 8 kg; prossimo obiettivo 11/9 con tecnica pulita."},
+  {id:"triceps",name:"Estensione tricipiti sopra la testa",sets:2,reps:"12-20",kg:"6",rest:120,svg:"tri",tip:"Oggi: 20 (+2) a 4 kg e 20 (+2) a 6 kg. Prossima seduta parti direttamente da 6 kg."},
   {id:"plank",name:"Plank",sets:2,reps:"40-60 sec",kg:"-",rest:90,svg:"plank",tip:"Addome e glutei contratti, corpo in linea. Il tappetino ormai non dà più scuse 😂."}
  ],
  lower:[
@@ -1170,12 +1175,14 @@ function playStartSound(){
    osc.start();osc.stop(ctx.currentTime+0.16);
  }catch(e){}
 }
-function setTimer(sec){stopTimer();remaining=sec;initial=sec;updateTimer()}
+let timerEndAt=0;
+function setTimer(sec){stopTimer();remaining=sec;initial=sec;timerEndAt=0;updateTimer()}
 function startTimer(){
  if(timerId)return;
  $("timerToggle").textContent="Pausa";
- timerId=setInterval(()=>{
-   remaining--;
+ timerEndAt=Date.now()+remaining*1000;
+ const tick=()=>{
+   remaining=Math.max(0,Math.ceil((timerEndAt-Date.now())/1000));
    if(remaining<=0){
      remaining=0;
      updateTimer();
@@ -1183,18 +1190,30 @@ function startTimer(){
      if(navigator.vibrate) navigator.vibrate([250,100,250]);
      try{
        const ctx = new (window.AudioContext||window.webkitAudioContext)();
-       const osc = ctx.createOscillator();
        const gain = ctx.createGain();
-       osc.connect(gain); gain.connect(ctx.destination);
-       osc.frequency.value = 880;
-       gain.gain.setValueAtTime(0.12, ctx.currentTime);
-       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.35);
-       osc.start(); osc.stop(ctx.currentTime+0.35);
+       gain.connect(ctx.destination);
+       gain.gain.setValueAtTime(0.15,ctx.currentTime);
+       gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.55);
+
+       const osc1=ctx.createOscillator();
+       osc1.connect(gain);
+       osc1.frequency.setValueAtTime(760,ctx.currentTime);
+       osc1.frequency.exponentialRampToValueAtTime(980,ctx.currentTime+0.18);
+       osc1.start(ctx.currentTime);
+       osc1.stop(ctx.currentTime+0.22);
+
+       const osc2=ctx.createOscillator();
+       osc2.connect(gain);
+       osc2.frequency.setValueAtTime(980,ctx.currentTime+0.27);
+       osc2.frequency.exponentialRampToValueAtTime(1180,ctx.currentTime+0.47);
+       osc2.start(ctx.currentTime+0.27);
+       osc2.stop(ctx.currentTime+0.52);
      }catch(e){}
 
      // Se "timer automatico" è attivo, riparte subito con lo stesso tempo.
      if($("autoTimer").checked){
-       remaining = initial;
+       remaining=initial;
+       timerEndAt=Date.now()+initial*1000;
        updateTimer();
        return;
      }
@@ -1203,9 +1222,20 @@ function startTimer(){
      return;
    }
    updateTimer();
- },1000);
+ };
+ tick();
+ timerId=setInterval(tick,250);
 }
-function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}$("timerToggle").textContent="Avvia"}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null}timerEndAt=0;$("timerToggle").textContent="Avvia"}
+
+// iOS may throttle JavaScript while a PWA is in background.
+// Recalculate from the absolute end timestamp immediately when returning.
+document.addEventListener("visibilitychange",()=>{
+ if(!document.hidden && timerId && timerEndAt){
+   remaining=Math.max(0,Math.ceil((timerEndAt-Date.now())/1000));
+   updateTimer();
+ }
+});
 
 function playUiTone(type){
  try{
@@ -1429,9 +1459,17 @@ function renderWeight(){
  renderWeightRail(wf);
 }
 
+function deleteWorkout(ts){
+ if(!confirm("Eliminare questo allenamento salvato? Questa operazione non può essere annullata."))return;
+ const h=getHistory().filter(x=>Number(x.ts)!==Number(ts));
+ localStorage.setItem("fw_history",JSON.stringify(h));
+ renderHistory();
+ populateExerciseSelect();
+ drawExerciseChart();
+}
 function renderHistory(){
  let h=getHistory().slice().sort((a,b)=>b.ts-a.ts);$("historyList").innerHTML=h.length?h.map(s=>`<div class="historyItem">
- <div class="row"><div><b>${new Date(s.ts).toLocaleDateString("it-IT")} • ${String(s.plan).toUpperCase()}</b><div class="muted">${s.completed}/${s.total} serie completate</div></div><span class="badge">${new Date(s.ts).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}</span></div>
+ <div class="row"><div><b>${new Date(s.ts).toLocaleDateString("it-IT")} • ${String(s.plan).toUpperCase()}</b><div class="muted">${s.completed}/${s.total} serie completate</div></div><div style="display:flex;gap:8px;align-items:center"><span class="badge">${new Date(s.ts).toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}</span><button class="btn historyDeleteBtn" onclick="deleteWorkout(${s.ts})" aria-label="Elimina allenamento">Elimina</button></div></div>
  ${s.notes?`<div class="note" style="margin-top:7px">${s.notes}</div>`:""}
  <div style="margin-top:7px">${s.exercises.map(e=>`<span class="badge">${e.name}: ${e.sets.filter(x=>x.reps||x.rir==="0").map(x=>`${x.kg||"—"}×${x.reps||"ced."}${x.rir!==""&&x.rir!==undefined?` Reps extra ${x.rir}`:""}`).join(" · ")||"registrato senza reps"}</span>`).join("")}</div>
  </div>`).join(""):`<div class="note">Ancora nessun allenamento salvato.</div>`;
