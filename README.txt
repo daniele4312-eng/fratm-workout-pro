@@ -10,3 +10,9 @@ Scheda Upper aggiornata sui risultati del 24/08/2026:
 - Estensione tricipiti sopra la testa: 2 serie, 6 kg, target 12-20.
 
 Include inoltre tutte le migliorie V29: timer basato sull'orario reale, recupero del tempo trascorso in background, segnale di fine timer, eliminazione workout errati.
+
+V31 (04/09/2026)
+- Scheda Upper aggiornata con gli ultimi carichi: rematore 8 kg.
+- Salvataggio allenamento corretto: le serie con reps inserite risultano completate anche senza i vecchi pulsanti ✓.
+- Export giornaliero usa la data locale del telefono.
+- Nuove pesate salvate anche con timestamp per rendere l'export più robusto.

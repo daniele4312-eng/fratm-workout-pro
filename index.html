@@ -1037,13 +1037,13 @@ body.timer-open{overflow:hidden}
 
 const plans = {
  upper:[
-  {id:"pushup",name:"Push-up",sets:3,reps:"15+",kg:"Senza pesi",rest:180,svg:"push",tip:"Oggi: 15 (+2), 15 (+1), 15 (+0). Prossimo obiettivo: aumentare gradualmente le reps mantenendo tecnica pulita."},
-  {id:"row",name:"Rematore con 2 manubri",sets:3,reps:"10-15",kg:"6",rest:180,svg:"row",tip:"Oggi a 4 kg: 18 (+4), 20 (+2), 25 (+3). Passa a 6 kg per lato e riparti con reps controllate."},
-  {id:"lateral",name:"Alzate laterali",sets:3,reps:"15-20",kg:"2",rest:120,svg:"lat",tip:"Oggi: 15 (+3), 20 (+2), 20 (+2). Mantieni 2 kg, fermo in alto e discesa lenta."},
-  {id:"shrug",name:"Shrug 🤷🏻‍♂️",sets:2,reps:"18-25",kg:"8",rest:120,svg:"shrug",tip:"Oggi: 18 (+2), 20 (+2). Mantieni 8 kg con pausa forte in alto e discesa controllata."},
-  {id:"curl",name:"Curl",sets:2,reps:"12-15",kg:"8",rest:180,svg:"curl",tip:"Oggi: 14 (+1), 12 (+0). Mantieni 8 kg e prova ad aumentare gradualmente le reps senza oscillare."},
-  {id:"hammer",name:"Hammer curl",sets:2,reps:"8-12",kg:"8",rest:180,svg:"curl",tip:"Oggi: 10 (+0), 8 (+0). Mantieni 8 kg; prossimo obiettivo 11/9 con tecnica pulita."},
-  {id:"triceps",name:"Estensione tricipiti sopra la testa",sets:2,reps:"12-20",kg:"6",rest:120,svg:"tri",tip:"Oggi: 20 (+2) a 4 kg e 20 (+2) a 6 kg. Prossima seduta parti direttamente da 6 kg."},
+  {id:"pushup",name:"Push-up",sets:3,reps:"16-20",kg:"Senza pesi",rest:180,svg:"push",tip:"Ultima seduta: 20 (+2), 16 (+1), 17 (+0). Mantieni tecnica pulita e lascia 1-2 reps nelle prime serie quando possibile."},
+  {id:"row",name:"Rematore con 2 manubri",sets:3,reps:"12-20",kg:"8",rest:180,svg:"row",tip:"Ultima seduta: 6 kg x 24 (+3), poi 8 kg x 20 e 20. Da ora parti direttamente da 8 kg e conta solo le reps completate da solo."},
+  {id:"lateral",name:"Alzate laterali",sets:3,reps:"15-20",kg:"2",rest:120,svg:"lat",tip:"Ultima seduta: 20/20/20. Mantieni 2 kg: fermo in alto e discesa lenta, senza inseguire il carico."},
+  {id:"shrug",name:"Shrug 🤷🏻‍♂️",sets:2,reps:"20-30",kg:"8",rest:120,svg:"shrug",tip:"Ultima seduta: 30/30 a 8 kg. Mantieni 8 kg con pausa forte in alto e discesa lenta per aumentare la difficoltà."},
+  {id:"curl",name:"Curl",sets:2,reps:"9-14",kg:"8",rest:180,svg:"curl",tip:"Ultima seduta: 13/9 a 8 kg. Mantieni il carico e conta solo reps pulite, senza oscillare."},
+  {id:"hammer",name:"Hammer curl",sets:2,reps:"8-12",kg:"8",rest:180,svg:"curl",tip:"Ultima seduta: 9/11 a 8 kg. Mantieni 8 kg e cerca progressione con tecnica pulita."},
+  {id:"triceps",name:"Estensione tricipiti sopra la testa",sets:2,reps:"12-20",kg:"6",rest:120,svg:"tri",tip:"Mantieni 6 kg. Punta a reps pulite e controllate; se serve aiuto, segna le reps assistite a parte e non contarle come reps autonome."},
   {id:"plank",name:"Plank",sets:2,reps:"40-60 sec",kg:"-",rest:90,svg:"plank",tip:"Addome e glutei contratti, corpo in linea. Il tappetino ormai non dà più scuse 😂."}
  ],
  lower:[
@@ -1309,7 +1309,17 @@ function saveWorkout(){
  let rows=[],completed=0,total=0;
  plans[activePlan].forEach((ex,i)=>{
   let sets=[];
-  for(let s=0;s<ex.sets;s++){total++;let kg=localStorage.getItem(k(activePlan,i,s,'kg'))??ex.kg,reps=localStorage.getItem(k(activePlan,i,s,'reps'))??"",rir=localStorage.getItem(k(activePlan,i,s,'rir'))??"",done=localStorage.getItem(k(activePlan,i,s,'done'))==='1';if(done)completed++;sets.push({kg,reps,rir,done})}
+  for(let s=0;s<ex.sets;s++){
+   total++;
+   let kg=localStorage.getItem(k(activePlan,i,s,'kg'))??ex.kg,
+       reps=localStorage.getItem(k(activePlan,i,s,'reps'))??"",
+       rir=localStorage.getItem(k(activePlan,i,s,'rir'))??"";
+   // Da V31 una serie è completata quando sono state inserite le reps.
+   // I vecchi pulsanti ✓ non esistono più, quindi non usiamo più fw_*_done.
+   let done=String(reps).trim()!=="";
+   if(done)completed++;
+   sets.push({kg,reps,rir,done});
+  }
   rows.push({id:ex.id,name:ex.name,sets});
  });
  let h=getHistory();h.unshift({ts:Date.now(),date:new Date().toISOString(),plan:activePlan,completed,total,exercises:rows});localStorage.setItem("fw_history",JSON.stringify(h));
@@ -1323,7 +1333,7 @@ const seedWeights=[
  {date:"2026-08-22",value:58.40},{date:"2026-08-23",value:58.65}
 ];
 function getWeights(){let w=JSON.parse(localStorage.getItem("fw_weights")||"null");if(!w){w=seedWeights;localStorage.setItem("fw_weights",JSON.stringify(w))}return w.sort((a,b)=>a.date.localeCompare(b.date))}
-function addWeight(){let date=$("weightDate").value,val=parseFloat($("weightValue").value.replace(",","."));if(!date||!isFinite(val)){alert("Inserisci data e peso.");return}let w=getWeights().filter(x=>x.date!==date);w.push({date,value:val});localStorage.setItem("fw_weights",JSON.stringify(w));$("weightValue").value="";renderWeight()}
+function addWeight(){let date=$("weightDate").value,val=parseFloat($("weightValue").value.replace(",","."));if(!date||!isFinite(val)){alert("Inserisci data e peso.");return}let w=getWeights().filter(x=>x.date!==date);w.push({date,value:val,ts:Date.now()});localStorage.setItem("fw_weights",JSON.stringify(w));$("weightValue").value="";renderWeight()}
 function delWeight(date){if(!confirm("Eliminare questa pesata?"))return;localStorage.setItem("fw_weights",JSON.stringify(getWeights().filter(x=>x.date!==date)));renderWeight()}
 
 let weightShowValues=true;
@@ -1691,8 +1701,12 @@ function exportData(){
  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 }
 
+function localISODate(d=new Date()){
+ const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,"0"),day=String(d.getDate()).padStart(2,"0");
+ return `${y}-${m}-${day}`;
+}
 function exportToday(){
- const date=new Date().toISOString().slice(0,10);
+ const date=localISODate();
  const start=new Date(date+"T00:00:00").getTime();
  const end=new Date(date+"T23:59:59").getTime();
 
